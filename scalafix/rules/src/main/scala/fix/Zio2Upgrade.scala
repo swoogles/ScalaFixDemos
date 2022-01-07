@@ -14,6 +14,14 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
       "whenM"                  -> "whenZIO",
       "serviceWith"               -> "serviceWithZIO"
     )
+  
+  lazy val scopes = List(
+    "zio.test.package",
+    "zio.test.Gen",
+    "zio.test.DefaultRunnableSpec",
+    "zio.Exit",
+    "zio.ZIO",
+  )
 
   case class GenericRename(scopes: List[String], oldName: String, newName: String) {
     val companions = scopes.map(_ + ".")
@@ -51,15 +59,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
     )
   )
 
-  val STMRenames = Renames(
-    List("zio.stm.ZSTM", "zio.stm.STM"),
-    Map(
-      "collectAll_"   -> "collectAllDiscard",
-      "foldM"         -> "foldSTM",
-    )
-  )
-  
-
   val FiberId_Old = SymbolMatcher.normalized("zio/Fiber.Id#")
 
   val Blocking_Old_Exact = SymbolMatcher.exact("zio/blocking/package.Blocking#")
@@ -89,11 +88,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
 
   val foreachParN             = ParNRenamer("foreachPar", 3)
   val collectAllParN          = ParNRenamer("collectAllPar", 2)
-  val collectAllSuccessesParN = ParNRenamer("collectAllSuccessPar", 2)
-  val collectAllWithParN      = ParNRenamer("collectAllWithPar", 3)
-  val reduceAllParN           = ParNRenamer("reduceAllPar", 3)
-  val partitionParN           = ParNRenamer("partitionPar", 3)
-  val mergeAllParN            = ParNRenamer("mergeAllPar", 4)
 
   object BuiltInServiceFixer { // TODO Handle all built-in services?
 
@@ -125,18 +119,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
       def unapply(tree: Tree)(implicit sdoc: SemanticDocument): Option[Patch] =
         importeeRenames.apply(tree)
     }
-
-    private val testConsoleMigrator =
-      ServiceMigrator(name = "TestConsole", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
-
-    val testRandomMigrator =
-      ServiceMigrator(name = "TestRandom", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
-
-    private val testSystemMigrator =
-      ServiceMigrator(name = "TestSystem", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
-
-    private val testConfigMigrator =
-      ServiceMigrator(name = "TestConfig", oldPath = "zio/test/package.", newPath = "zio/test/")
 
     private val consoleMigrator =
       ServiceMigrator(name = "Console", oldPath = "zio/console/package.", newPath = "zio/")
@@ -201,12 +183,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
         case randomMigrator(patch)          => patch
         case systemMigrator(patch)          => patch
         case consoleMigrator(patch)         => patch
-        case testConfigMigrator(patch)      => patch
-        case testSystemMigrator(patch)      => patch
-        case testAnnotationsMigrator(patch) => patch
-        case testConsoleMigrator(patch)     => patch
-        case testRandomMigrator(patch)      => patch
-        case testLoggerMigrator(patch)      => patch
 
         case t @ q"zio.random.Random" =>
           Patch.replaceTree(t, "zio.Random")
@@ -230,7 +206,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
       case BuiltInServiceFixer.ImporteeRenamer(patch) => patch
 
       case ZIORenames.Matcher(patch)       => patch
-      case STMRenames.Matcher(patch)       => patch
       case UniversalRenames.Matcher(patch) => patch
 
       case BuiltInServiceFixer(patch) => patch
@@ -252,11 +227,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
 
       case foreachParN.Matcher(patch)             => patch
       case collectAllParN.Matcher(patch)          => patch
-      case collectAllSuccessesParN.Matcher(patch) => patch
-      case collectAllWithParN.Matcher(patch)      => patch
-      case partitionParN.Matcher(patch)           => patch
-      case reduceAllParN.Matcher(patch)           => patch
-      case mergeAllParN.Matcher(patch)            => patch
 
       case t @ q"import zio.blocking._" =>
         Patch.removeTokens(t.tokens)
@@ -288,21 +258,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
 
       case t @ q"zio.duration.Duration" =>
         Patch.replaceTree(t, "zio.Duration")
-
-      case t @ q"import zio.clock.Clock" =>
-        Patch.replaceTree(t, "import zio.Clock")
-
-      case t @ q"zio.internal.Executor" =>
-        Patch.replaceTree(t, "zio.Executor")
-
-      case t @ q"Platform.fromExecutor" =>
-        Patch.replaceTree(t, "RuntimeConfig.fromExecutor")
-
-      case t @ q"zio.internal.Platform" =>
-        Patch.replaceTree(t, "zio.RuntimeConfig")
-
-      case t @ q"zio.internal.Tracing" =>
-        Patch.replaceTree(t, "zio.internal.tracing.Tracing")
 
       case t @ q"import zio.internal.Tracing" =>
         Patch.replaceTree(t, "import zio.internal.tracing.Tracing")

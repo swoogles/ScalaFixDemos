@@ -57,7 +57,6 @@ lazy val scalafixInput = project
   .in(file("scalafix/input"))
   .settings(
     scalafixSettings,
-    publish / skip                   := true,
     libraryDependencies += "dev.zio" %% "zio"         % zio1Version,
     libraryDependencies += "dev.zio" %% "zio-streams" % zio1Version,
     libraryDependencies += "dev.zio" %% "zio-test"    % zio1Version
@@ -67,14 +66,12 @@ lazy val scalafixOutput = project
   .in(file("scalafix/output"))
   .settings(
     scalafixSettings,
-    publish / skip := true
   )
 
 lazy val scalafixTests = project
   .in(file("scalafix/tests"))
   .settings(
     scalafixSettings,
-    publish / skip                        := true,
     libraryDependencies += "ch.epfl.scala" % "scalafix-testkit" % "0.9.32" % Test cross CrossVersion.full,
     Compile / compile :=
       (Compile / compile).dependsOn(scalafixInput / Compile / compile).value,

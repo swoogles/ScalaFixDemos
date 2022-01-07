@@ -1,11 +1,8 @@
-/*
-rule = CoffeeChatRule
- */
 object NamingSchemeChange {
     def complete(isSuccess: Boolean): Unit = ()
-    complete(true)
+    complete(isSuccess = true)
     val myOldName = true
-    println(true)
+    println(x = true)
     def finish(isError: Boolean): Unit = ()
-    finish(true)
+    finish(isError = true)
 }
