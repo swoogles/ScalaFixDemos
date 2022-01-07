@@ -74,85 +74,14 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
     // System
     "zio.system.env"              -> "zio.System.env",
     "zio.system.envOrElse"        -> "zio.System.envOrElse",
-    "zio.system.envOrOption"      -> "zio.System.envOrOption",
-    "zio.system.envs"             -> "zio.System.envs",
-    "zio.system.lineSeparator"    -> "zio.System.lineSeparator",
-    "zio.system.properties"       -> "zio.System.properties",
-    "zio.system.property"         -> "zio.System.property",
-    "zio.system.propertyOrElse"   -> "zio.System.propertyOrElse",
-    "zio.system.propertyOrOption" -> "zio.System.propertyOrOption",
     // Console
     "zio.console.putStrLn"    -> "zio.Console.printLine",
-    "zio.console.getStrLn"    -> "zio.Console.readLine",
-    "zio.console.putStr"      -> "zio.Console.print",
-    "zio.console.putStrLnErr" -> "zio.Console.printLineError",
-    "zio.console.putStrErr"   -> "zio.Console.printError",
-    // Clock
-    "zio.clock.sleep"           -> "zio.Clock.sleep",
-    "zio.clock.instant"         -> "zio.Clock.instant",
-    "zio.clock.nanoTime"        -> "zio.Clock.nanoTime",
-    "zio.clock.localDateTime"   -> "zio.Clock.localDateTime",
-    "zio.clock.currentTime"     -> "zio.Clock.currentTime",
-    "zio.clock.currentDateTime" -> "zio.Clock.currentDateTime",
-    // Random
-    "zio.random.nextString"        -> "zio.Random.nextString",
-    "zio.random.nextBoolean"       -> "zio.Random.nextBoolean",
-    "zio.random.nextBytes"         -> "zio.Random.nextBytes",
-    "zio.random.nextDouble"        -> "zio.Random.nextDouble",
-    "zio.random.nextDoubleBetween" -> "zio.Random.nextDoubleBetween",
-    "zio.random.nextFloat"         -> "zio.Random.nextFloat",
-    "zio.random.nextFloatBetween"  -> "zio.Random.nextFloatBetween",
-    "zio.random.nextGaussian"      -> "zio.Random.nextGaussian",
-    "zio.random.nextInt"           -> "zio.Random.nextInt",
-    "zio.random.nextIntBetween"    -> "zio.Random.nextIntBetween",
-    "zio.random.nextIntBounded"    -> "zio.Random.nextIntBounded",
-    "zio.random.nextLong"          -> "zio.Random.nextLong",
-    "zio.random.nextLongBetween"   -> "zio.Random.nextLongBetween",
-    "zio.random.nextLongBounded"   -> "zio.Random.nextLongBounded",
-    "zio.random.nextPrintableChar" -> "zio.Random.nextPrintableChar",
-    "zio.random.nextString"        -> "zio.Random.nextString",
-    "zio.random.nextUUID"          -> "zio.Random.nextUUID",
-    "zio.random.setSeed"           -> "zio.Random.setSeed",
     "zio.random.shuffle"           -> "zio.Random.shuffle",
     // Blocking
     "zio.blocking.effectBlockingIO"         -> "zio.ZIO.attemptBlockingIO",
-    "zio.blocking.effectBlocking"           -> "zio.ZIO.attemptBlocking",
-    "zio.blocking.effectBlockingCancelable" -> "zio.ZIO.attemptBlockingCancelable",
-    "zio.blocking.effectBlockingInterrupt"  -> "zio.ZIO.attemptBlockingInterrupt",
-    "zio.blocking.blocking"                 -> "zio.ZIO.blocking",
-    "zio.blocking.blockingExecutor"         -> "zio.ZIO.blockingExecutor",
     // Gen
     "zio.test.Gen.anyInt"                     -> "zio.test.Gen.int",
     "zio.test.Gen.anyString"                  -> "zio.test.Gen.string",
-    "zio.test.Gen.anyUnicodeChar"             -> "zio.test.Gen.unicodeChar",
-    "zio.test.Gen.anyASCIIChar"               -> "zio.test.Gen.asciiChar",
-    "zio.test.Gen.anyByte"                    -> "zio.test.Gen.byte",
-    "zio.test.Gen.anyChar"                    -> "zio.test.Gen.char",
-    "zio.test.Gen.anyDouble"                  -> "zio.test.Gen.double",
-    "zio.test.Gen.anyFloat"                   -> "zio.test.Gen.float",
-    "zio.test.Gen.anyHexChar"                 -> "zio.test.Gen.hexChar",
-    "zio.test.Gen.anyLong"                    -> "zio.test.Gen.long",
-    "zio.test.Gen.anyLowerHexChar"            -> "zio.test.Gen.hexCharLower",
-    "zio.test.Gen.anyShort"                   -> "zio.test.Gen.short",
-    "zio.test.Gen.anyUpperHexChar"            -> "zio.test.Gen.hexCharUpper",
-    "zio.test.Gen.anyASCIIString"             -> "zio.test.Gen.asciiString",
-    "zio.test.Gen.anyUUID"                    -> "zio.test.Gen.uuid",
-    "zio.test.Gen.anyInstant"                 -> "zio.test.Gen.instant",
-    "zio.test.TimeVariants.anyDayOfWeek"      -> "zio.test.Gen.dayOfWeek",
-    "zio.test.TimeVariants.anyFiniteDuration" -> "zio.test.Gen.finiteDuration",
-    "zio.test.TimeVariants.anyLocalDate"      -> "zio.test.Gen.localDate",
-    "zio.test.TimeVariants.anyLocalTime"      -> "zio.test.Gen.localTime",
-    "zio.test.TimeVariants.anyLocalDateTime"  -> "zio.test.Gen.localDateTime",
-    "zio.test.TimeVariants.anyMonth"          -> "zio.test.Gen.month",
-    "zio.test.TimeVariants.anyMonthDay"       -> "zio.test.Gen.monthDay",
-    "zio.test.TimeVariants.anyOffsetDateTime" -> "zio.test.Gen.offsetDateTime",
-    "zio.test.TimeVariants.anyOffsetTime"     -> "zio.test.Gen.offsetTime",
-    "zio.test.TimeVariants.anyPeriod"         -> "zio.test.Gen.period",
-    "zio.test.TimeVariants.anyYear"           -> "zio.test.Gen.year",
-    "zio.test.TimeVariants.anyYearMonth"      -> "zio.test.Gen.yearMonth",
-    "zio.test.TimeVariants.anyZonedDateTime"  -> "zio.test.Gen.zonedDateTime",
-    "zio.test.TimeVariants.anyZoneOffset"     -> "zio.test.Gen.zoneOffset",
-    "zio.test.TimeVariants.anyZoneId"         -> "zio.test.Gen.zoneId",
     // App
     "zio.App"           -> "zio.ZIOAppDefault",
     "zio.Executor.asEC" -> "zio.Executor.asExecutionContext"
@@ -188,16 +117,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
           randomMigrator,
           systemMigrator,
           consoleMigrator,
-          testConfigMigrator,
-          testSystemMigrator,
-          testAnnotationsMigrator,
-          testConsoleMigrator,
-          testRandomMigrator,
-          testLoggerMigrator,
-          testClockMigrator,
-          clockMigrator,
-          sizedMigrator,
-          testLiveMigrator
         ).foldLeft(List[SymbolMatcher](hasNormalized)) { case (serviceMatchers, serviceMigrator) =>
           serviceMatchers ++ List(serviceMigrator.normalizedOld, serviceMigrator.normalizedOldService)
         }.map(pf).foldLeft {pf1} {pf2}
@@ -207,29 +126,11 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
         importeeRenames.apply(tree)
     }
 
-    private val testLiveMigrator =
-      ServiceMigrator(name = "Live", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
-
-    private val sizedMigrator =
-      ServiceMigrator(name = "Sized", oldPath = "zio/test/package.", newPath = "zio/test/")
-
-    private val clockMigrator =
-      ServiceMigrator(name = "Clock", oldPath = "zio/clock/environment/package.", newPath = "zio/")
-
-    private val testClockMigrator =
-      ServiceMigrator(name = "TestClock", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
-
     private val testConsoleMigrator =
       ServiceMigrator(name = "TestConsole", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
 
     val testRandomMigrator =
       ServiceMigrator(name = "TestRandom", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
-
-    private val testLoggerMigrator =
-      ServiceMigrator(name = "TestLogger", oldPath = "zio/test/package.", newPath = "zio/test/")
-
-    private val testAnnotationsMigrator =
-      ServiceMigrator(name = "Annotations", oldPath = "zio/test/package.", newPath = "zio/test/")
 
     private val testSystemMigrator =
       ServiceMigrator(name = "TestSystem", oldPath = "zio/test/environment/package.", newPath = "zio/test/")
@@ -288,16 +189,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
               randomMigrator,
               systemMigrator,
               consoleMigrator,
-              testConfigMigrator,
-              testSystemMigrator,
-              testAnnotationsMigrator,
-              testConsoleMigrator,
-              testRandomMigrator,
-              testLoggerMigrator,
-              testClockMigrator,
-              clockMigrator,
-              sizedMigrator,
-              testLiveMigrator
             ).foldLeft(List.empty[SymbolMatcher]) { case (serviceMatchers, serviceMigrator) =>
               serviceMatchers ++ List(serviceMigrator.oldService, serviceMigrator.oldExact)
             }
@@ -316,9 +207,6 @@ class Zio2Upgrade extends SemanticRule("Zio2Upgrade") {
         case testConsoleMigrator(patch)     => patch
         case testRandomMigrator(patch)      => patch
         case testLoggerMigrator(patch)      => patch
-        case testClockMigrator(patch)       => patch
-        case sizedMigrator(patch)           => patch
-        case testLiveMigrator(patch)        => patch
 
         case t @ q"zio.random.Random" =>
           Patch.replaceTree(t, "zio.Random")
