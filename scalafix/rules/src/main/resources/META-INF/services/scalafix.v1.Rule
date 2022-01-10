@@ -3,3 +3,4 @@ fix.Zio2Upgrade
 fix.CoffeeChatRule
 fix.RewriteClockUsage
 fix.SideEffectLinterRule
+fix.FutureLinterRule
