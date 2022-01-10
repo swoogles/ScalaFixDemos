@@ -2,12 +2,12 @@
 rule = RewriteClockUsage
  */
 import java.time.Instant
+
+case class UserAction(timestamp: Instant)
 object ClockUsage {
     Instant.now()
 
-    {
-        println("Other stuff")
-        Instant.now()
-        val x = 3
+    def useIt() = {
+        UserAction(Instant.now())
     }
 }

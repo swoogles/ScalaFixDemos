@@ -1,10 +1,10 @@
 import java.time.Instant
+
+case class UserAction(timestamp: Instant)
 object ClockUsage {
     Instant.now()
 
-    for { now <- zio.Clock.instant } yield {
-        println("Other stuff")
-        now
-        val x = 3
+    def useIt() = for { now <- zio.Clock.instant } yield {
+        UserAction(now)
     }
 }

@@ -28,18 +28,36 @@ class RewriteClockUsage extends SemanticRule("RewriteClockUsage") {
             }
         */
     }
+
+    def replaceNow(tree: Tree)(implicit doc: SemanticDocument): Patch = 
+        tree.children.map { child =>
+            child match {
+                case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
+                    Patch.replaceTree(badClockUsage, "now")
+                case other => replaceNow(child)(doc)
+            }
+    }.asPatch
+
+    def containsAClock(tree: Tree)(implicit doc: SemanticDocument): Boolean = 
+        tree.children.exists(child => 
+            child match {
+                case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
+                    true
+                case other =>
+                    other.children.exists(containsAClock)
+            }
+            )
+        
     
     def identifyClockInABlock(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
         case t @ Term.Block(args) =>
-            args.collect {
-                case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
-                    println("One of statements was a bad clock usage!")
-                    Patch.addLeft(t, 
-                        """for { now <- zio.Clock.instant } yield """) + Patch.replaceTree(badClockUsage, "now")
-                case otherStatement =>
-                    println("other statement: " +  otherStatement)
-                    Patch.empty
-            }.asPatch
+            if (args.exists(containsAClock))
+                Patch.addLeft(t, """for { now <- zio.Clock.instant } yield """) + 
+                args.map(replaceNow).asPatch
+            else  args.collect(identifyClockInABlock).asPatch
+        // case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
+            // Patch.replaceTree(badClockUsage, "now")
+        case other => Patch.empty
             
             // println("Clock in a block")
             // Patch.empty
@@ -47,11 +65,11 @@ class RewriteClockUsage extends SemanticRule("RewriteClockUsage") {
 
   override def fix(implicit doc: SemanticDocument): Patch = {
     // println(q"""complete(true, "blah")""".structure)
-    println(
-        q"""{
-        println("Other stuff")
-        Instant.now()
-        }""".structure)
+    // println(
+    //     q"""{
+    //     println("Other stuff")
+    //     val timestamp = Instant.now()
+    //     }""".structure)
     doc.tree.collect {
         // identifyClockUsage
         identifyClockInABlock
