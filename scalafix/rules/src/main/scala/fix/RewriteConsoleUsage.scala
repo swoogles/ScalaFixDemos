@@ -21,10 +21,19 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                             Term.Apply(Term.Name("readLine"), List())
                         ) => 
 
-                    Patch.addLeft(containingBlock, s"""$variableName <- zio.Console.readLine""") +
+                    Patch.addLeft(containingBlock, s"""\n${indentation}$variableName <- zio.Console.readLine""") +
                     Patch.replaceTree(sideEffectingCall, "")
 
                 // case otherAssignment @ Defn.Val(List(), List(Pat.Var(Term.Name("x"))), None, Lit.Int(3))
+                
+                case printEffect @ Term.Apply(
+                    Term.Name("println"),
+                    List(
+                        anyArguments
+                    )
+                ) => 
+                    Patch.addLeft(containingBlock, s"\n${indentation}_ <- zio.Console.printLine($anyArguments)") +
+                    Patch.replaceTree(printEffect, "")
                 case sideEffectingCall @ 
                           Defn.Val(
                             List(),
@@ -32,7 +41,7 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                             None,
                             rhs
                         ) => 
-                    Patch.addLeft(containingBlock, s"\n$indentation$variableName <- ZIO($rhs)") +
+                    Patch.addLeft(containingBlock, s"\n$indentation$variableName <- zio.ZIO($rhs)") +
                     Patch.replaceTree(sideEffectingCall, "")
                 case _ => tree.children.map { child =>
                             if (containsAClock(child))
@@ -62,30 +71,21 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                             Term.Apply(Term.Name("readLine"), List())
                         ) => 
                     true
-                case _ => 
-                    tree.children.exists{child => 
-                        println("Child when searching for readLine: " + child)
-                        child match {
-                            case sideEffectingCall @ 
-                                    Defn.Val(
-                                        List(),
-                                        List(Pat.Var(Term.Name("name"))),
-                                        None,
-                                        Term.Name("readLine")
-                                    ) => 
-                                ???
-                                true
-                            case other =>
-                                other.children.exists(containsAClock)
-                        }
-                    }
+                case printEffect @ Term.Apply(
+                    Term.Name("println"),
+                    List(
+                        anyArguments
+                    )
+                ) => true
+                case other =>
+                    other.children.exists(containsAClock)
 
         }
 
     def identifyClockInABlock(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
         case t @ Term.Block(args) =>
             if (args.exists(containsAClock) )
-                Patch.addLeft(t, s"""for {\n${indentation}""") + 
+                Patch.addLeft(t, s"""for {""") + 
                     args.map(replaceNow(_, t)).asPatch + 
                     Patch.addLeft(t, s"""\n    } yield ()""")  +
                     Patch.replaceTree(t, "")
