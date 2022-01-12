@@ -9,25 +9,21 @@ import scala.meta._
 
 class RewriteRandomUsage extends SemanticRule("RewriteRandomUsage") {
     def replaceRandInt(tree: Tree)(implicit doc: SemanticDocument): Patch = 
-        tree.children.map { child =>
-            child match {
-                // case badRandUsage @ Term.Apply(Term.Select(Term.Name("Random"), Term.Name("nextInt")), List()) => 
-                case badRandUsage @ Term.Select(Term.Name("Random"), Term.Name("nextInt")) => 
+        tree match {
+                case badRandUsage @ Term.Apply(Term.Select(Term.Name("Random"), Term.Name("nextInt")), List()) => 
+                // case badRandUsage @ Term.Select(Term.Name("Random"), Term.Name("nextInt")) => 
 
                     Patch.replaceTree(badRandUsage, "randInt")
-                case other => replaceRandInt(child)(doc)
-            }
-    }.asPatch
+                case other => tree.children.map(child => replaceRandInt(child)(doc)).asPatch
+    }
 
     def containsARandomNextInt(tree: Tree)(implicit doc: SemanticDocument): Boolean = 
-        tree.children.exists{child => 
-            child match {
-                case badClockUsage @ Term.Select(Term.Name("Random"), Term.Name("nextInt")) =>
-                // case badClockUsage @ Term.Apply(Term.Select(Term.Name("Random"), Term.Name("nextInt")), List()) =>   // TODO Doesn't work for some reason :(
+        tree match {
+                // case badClockUsage @ Term.Select(Term.Name("Random"), Term.Name("nextInt")) =>
+                case badClockUsage @ Term.Apply(Term.Select(Term.Name("Random"), Term.Name("nextInt")), List()) =>   // TODO Doesn't work for some reason :(
                     true
                 case other =>
                     other.children.exists(containsARandomNextInt)
-            }
         }
         
     
