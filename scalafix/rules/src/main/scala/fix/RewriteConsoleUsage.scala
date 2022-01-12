@@ -9,6 +9,7 @@ import scala.meta._
 
 class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
     private val newClockNowDeclaration = "input <- zio.Console.readLine"
+    private val indentation = "      "
     def replaceNow(tree: Tree, containingBlock: Term.Block)(implicit doc: SemanticDocument): Patch =
         tree match {
 
@@ -23,30 +24,21 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                     Patch.addLeft(containingBlock, s"""$variableName <- zio.Console.readLine""") +
                     Patch.replaceTree(sideEffectingCall, "")
 
+                // case otherAssignment @ Defn.Val(List(), List(Pat.Var(Term.Name("x"))), None, Lit.Int(3))
                 case sideEffectingCall @ 
                           Defn.Val(
                             List(),
                             List(Pat.Var(Term.Name(variableName))),
                             None,
-                            Term.Apply(rhs)
+                            rhs
                         ) => 
-                    Patch.replaceTree(sideEffectingCall, s"$variableName <- ZIO(rhs)")
+                    Patch.addLeft(containingBlock, s"\n$indentation$variableName <- ZIO($rhs)") +
+                    Patch.replaceTree(sideEffectingCall, "")
                 case _ => tree.children.map { child =>
-                    child match {
-                        case sideEffectingCall @ 
-                                Defn.Val(
-                                    List(),
-                                    List(Pat.Var(Term.Name("name"))),
-                                    None,
-                                    Term.Apply(Term.Name("readLine"), List())
-                                ) => 
-                            Patch.replaceTree(sideEffectingCall, "now")
-                        case other => 
-                            if (containsAClock(other))
+                            if (containsAClock(child))
                                 replaceNow(child, containingBlock)(doc)
                             else
                                 Patch.empty
-                    }
                 }.asPatch
             }
 
@@ -93,9 +85,10 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
     def identifyClockInABlock(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
         case t @ Term.Block(args) =>
             if (args.exists(containsAClock) )
-                Patch.addLeft(t, s"""for {\n      """) + 
+                Patch.addLeft(t, s"""for {\n${indentation}""") + 
                     args.map(replaceNow(_, t)).asPatch + 
-                    Patch.addLeft(t, s"""\n    } yield """) 
+                    Patch.addLeft(t, s"""\n    } yield ()""")  +
+                    Patch.replaceTree(t, "")
             else  args.collect(identifyClockInABlock).asPatch
     }
 
@@ -104,6 +97,7 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
             def consoleProgram() = {
                 println("Please enter your name")
                 val name = readLine()
+                val x = 3
                 println(s"Hello " + name)
             }
             }
