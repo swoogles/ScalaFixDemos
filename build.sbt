@@ -52,6 +52,7 @@ lazy val scalafixRules = project
   )
 
 val zio1Version = "1.0.12"
+val zio2Version = "2.0.0-RC1"
 
 lazy val scalafixInput = project
   .in(file("scalafix/input"))
@@ -66,6 +67,9 @@ lazy val scalafixOutput = project
   .in(file("scalafix/output"))
   .settings(
     scalafixSettings,
+    libraryDependencies += "dev.zio" %% "zio"         % zio2Version,
+    libraryDependencies += "dev.zio" %% "zio-streams" % zio2Version,
+    libraryDependencies += "dev.zio" %% "zio-test"    % zio2Version
   )
 
 lazy val scalafixTests = project

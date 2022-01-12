@@ -10,4 +10,8 @@ object ClockUsage {
     def useIt() = {
         UserAction(Instant.now())
     }
+
+    def useMultiple() = {
+        UserAction(Instant.now())
+    }
 }

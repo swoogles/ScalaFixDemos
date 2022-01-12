@@ -2,5 +2,7 @@ fix.CurriedAssert
 fix.Zio2Upgrade
 fix.CoffeeChatRule
 fix.RewriteClockUsage
+fix.RewriteConsoleUsage
+fix.RewriteRandomUsage
 fix.SideEffectLinterRule
 fix.FutureLinterRule
