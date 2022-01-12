@@ -9,23 +9,19 @@ import scala.meta._
 
 class RewriteClockUsage extends SemanticRule("RewriteClockUsage") {
     def replaceNow(tree: Tree)(implicit doc: SemanticDocument): Patch = 
-        tree.children.map { child =>
-            child match {
+        tree match {
                 case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
                     Patch.replaceTree(badClockUsage, "now")
-                case other => replaceNow(child)(doc)
+                case other => tree.children.map(child=>replaceNow(child)(doc)).asPatch
             }
-    }.asPatch
 
     def containsAClock(tree: Tree)(implicit doc: SemanticDocument): Boolean = 
-        tree.children.exists(child => 
-            child match {
+        tree match {
                 case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
                     true
                 case other =>
-                    other.children.exists(containsAClock)
+                    tree.children.exists(containsAClock)
             }
-            )
 
     private val newClockNowDeclaration = "now <- zio.Clock.instant"
     def identifyClockInABlock(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
