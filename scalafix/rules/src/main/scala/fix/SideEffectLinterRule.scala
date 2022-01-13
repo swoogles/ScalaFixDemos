@@ -24,7 +24,7 @@ case class SideEffect(invocation: Term.Apply, service: SideEffectingService) ext
 }
 
 class SideEffectLinterRule extends SyntacticRule("SideEffectLinterRule"){
-    override def fix(implicit doc: SyntacticDocument): Patch = 
+    override def fix(implicit doc: SyntacticDocument): Patch =  {
         doc.tree.collect {
             // This version _only_ applied if you're printing literal strings. Show as a first step?
             // case t @ Term.Apply(Term.Name("println"), List(Lit.String(_))) => 
@@ -34,5 +34,6 @@ class SideEffectLinterRule extends SyntacticRule("SideEffectLinterRule"){
                 Patch.lint(SideEffect(t, ClockZ))
 
         }.asPatch
+    }
   
 }

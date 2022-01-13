@@ -37,14 +37,6 @@ class RewriteRandomUsage extends SemanticRule("RewriteRandomUsage") {
     }
 
   override def fix(implicit doc: SemanticDocument): Patch = {
-    println(q"""
-        import scala.util.Random
-
-        object RandomUsage {
-            def useRandom() = {
-                Random.nextInt()
-            }
-        }""".structure)
     doc.tree.collect {
         identifyClockInABlock
     }.asPatch

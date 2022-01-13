@@ -8,6 +8,10 @@ import scala.annotation.tailrec
 import scala.meta._
 
 class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
+    // TODO Use these in matching
+    val badPrintLn = SymbolMatcher.normalized("scala.Predef.println")
+    val badReadLn = SymbolMatcher.normalized("scala.Predef.readLine")
+
     private val newClockNowDeclaration = "input <- zio.Console.readLine"
     private val indentation = "      "
     def replaceNow(tree: Tree, containingBlock: Term.Block)(implicit doc: SemanticDocument): Patch =
@@ -27,7 +31,8 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                 // case otherAssignment @ Defn.Val(List(), List(Pat.Var(Term.Name("x"))), None, Lit.Int(3))
                 
                 case printEffect @ Term.Apply(
-                    Term.Name("println"),
+                    // TODO Demo this less-precise version first: Term.Name("println"),
+                    badPrintLn(_),
                     List(
                         anyArguments
                     )
@@ -50,16 +55,6 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                                 Patch.empty
                 }.asPatch
             }
-
-    /*
-    def consoleProgram() = for {
-        _ <- zio.Console.printLine("Please enter your name")
-        name <- zio.Console.readLine
-        _ <- zio.Console.printLine("Hello " + name)
-        } yield ()
-
-
-    */
 
     def containsAClock(tree: Tree)(implicit doc: SemanticDocument): Boolean = 
         tree match {
@@ -93,16 +88,6 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
     }
 
   override def fix(implicit doc: SemanticDocument): Patch = {
-      println(q"""object ConsoleUsage {
-            def consoleProgram() = {
-                println("Please enter your name")
-                val name = readLine()
-                val x = 3
-                println(s"Hello " + name)
-            }
-            }
-      """.structure)
-
     doc.tree.collect {
         identifyClockInABlock
     }.asPatch

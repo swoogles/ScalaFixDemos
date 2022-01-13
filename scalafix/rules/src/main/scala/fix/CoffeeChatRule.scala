@@ -11,13 +11,11 @@ class CoffeeChatRule extends SemanticRule("CoffeeChatRule") {
 
     def noBooleanLiteralParameters(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
         case Term.Apply(fun, args) =>
-            println("Args: " + args.mkString(","))
             args.zipWithIndex.collect { 
                 case (t @ Lit.Boolean(_), i) => fun.symbol.info match {
                     case Some(info) => 
                         info.signature match {
                             case method: MethodSignature if method.parameterLists.nonEmpty =>
-                                println("Where we expect to be")
                                 val parameter = method.parameterLists.head(i)
                                 val parameterName = parameter.displayName
                                 Patch.addLeft(t, s"$parameterName = ")
@@ -31,7 +29,6 @@ class CoffeeChatRule extends SemanticRule("CoffeeChatRule") {
         }
 
   override def fix(implicit doc: SemanticDocument): Patch = {
-    println(q"""Instant.now()""".structure)
     doc.tree.collect {
         noBooleanLiteralParameters 
     }.asPatch

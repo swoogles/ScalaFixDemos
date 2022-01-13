@@ -8,16 +8,17 @@ import scala.annotation.tailrec
 import scala.meta._
 
 class RewriteClockUsage extends SemanticRule("RewriteClockUsage") {
+    val badPrintLn = SymbolMatcher.normalized("java.time.Instant")
     def replaceNow(tree: Tree)(implicit doc: SemanticDocument): Patch = 
         tree match {
-                case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
+                case badClockUsage @ Term.Apply(Term.Select(badPrintLn(_), Term.Name("now")), List()) => 
                     Patch.replaceTree(badClockUsage, "now")
                 case other => tree.children.map(child=>replaceNow(child)(doc)).asPatch
             }
 
     def containsAClock(tree: Tree)(implicit doc: SemanticDocument): Boolean = 
         tree match {
-                case badClockUsage @ Term.Apply(Term.Select(Term.Name("Instant"), Term.Name("now")), List()) => 
+                case badClockUsage @ Term.Apply(Term.Select(badPrintLn(_), Term.Name("now")), List()) => 
                     true
                 case other =>
                     tree.children.exists(containsAClock)

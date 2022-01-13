@@ -21,12 +21,6 @@ case class FutureLintReport(invocation: Term.Apply) extends Diagnostic {
 
 class FutureLinterRule extends SyntacticRule("FutureLinterRule"){
     override def fix(implicit doc: SyntacticDocument): Patch = {
-        // println(q"""Future.successful(3)""".structure)
-        // println(q"""Future{
-        //                 val x = 3
-        //                 val y = "name"
-        //                 name * 3
-        //             }""".structure)
         doc.tree.collect {
             case t @ Term.Apply(
                 Term.Select(Term.Name("Future"), Term.Name("successful")),
