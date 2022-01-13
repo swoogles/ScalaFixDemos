@@ -5,7 +5,8 @@ Rules:
 
 Show off some Built-ins
     -DisableSyntax
-        - vars, throws, nulls, noIsInstanceOf, noAsInstanceOf 
+        - noAsInstanceOf 
+        - vars, throws, nulls, noIsInstanceOf, 
 
 Custom linters
 

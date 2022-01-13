@@ -8,11 +8,9 @@ import scala.annotation.tailrec
 import scala.meta._
 
 class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
-    // TODO Use these in matching
     val badPrintLn = SymbolMatcher.normalized("scala.Predef.println")
-    val badReadLn = SymbolMatcher.normalized("scala.Predef.readLine")
+    val badReadLn = SymbolMatcher.normalized("scala.io.StdIn.readLine")
 
-    private val newClockNowDeclaration = "input <- zio.Console.readLine"
     private val indentation = "      "
     def replaceNow(tree: Tree, containingBlock: Term.Block)(implicit doc: SemanticDocument): Patch =
         tree match {
@@ -22,17 +20,16 @@ class RewriteConsoleUsage extends SemanticRule("RewriteConsoleUsage") {
                             List(),
                             List(Pat.Var(Term.Name(variableName))),
                             None,
-                            Term.Apply(Term.Name("readLine"), List())
+                            Term.Apply(badReadLn(_), List())
                         ) => 
 
                     Patch.addLeft(containingBlock, s"""\n${indentation}$variableName <- zio.Console.readLine""") +
                     Patch.replaceTree(sideEffectingCall, "")
-
-                // case otherAssignment @ Defn.Val(List(), List(Pat.Var(Term.Name("x"))), None, Lit.Int(3))
                 
                 case printEffect @ Term.Apply(
-                    // TODO Demo this less-precise version first: Term.Name("println"),
-                    badPrintLn(_),
+                    Term.Name("println"),
+                    // TODO Switch to this version
+                    // badPrintLn(_),
                     List(
                         anyArguments
                     )
