@@ -7,7 +7,7 @@ import scalafix.v1._
 import scala.annotation.tailrec
 import scala.meta._
 
-class CoffeeChatRule extends SemanticRule("CoffeeChatRule") {
+class NamedBooleansRule extends SemanticRule("NamedBooleansRule") {
 
     def noBooleanLiteralParameters(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
         case Term.Apply(fun, args) =>

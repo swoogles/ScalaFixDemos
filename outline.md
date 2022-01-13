@@ -4,11 +4,10 @@ Rules:
     - Semantic
 
 Show off some Built-ins
-    -DisableSyntax
-        - noAsInstanceOf 
-        - vars, throws, nulls, noIsInstanceOf, 
 
 Custom linters
+    -Future
+    -SideEffect
 
 Symbols
     -Exact VS Normalized

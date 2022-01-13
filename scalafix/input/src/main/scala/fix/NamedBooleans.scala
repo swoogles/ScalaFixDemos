@@ -1,5 +1,5 @@
 /*
-rule = CoffeeChatRule
+rule = NamedBooleansRule
  */
 object NamingSchemeChange {
     def complete(isSuccess: Boolean): Unit = ()

@@ -1,5 +1,5 @@
 fix.Zio2Upgrade
-fix.CoffeeChatRule
+fix.NamedBooleansRule
 fix.RewriteClockUsage
 fix.RewriteConsoleUsage
 fix.RewriteRandomUsage

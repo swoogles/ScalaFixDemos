@@ -27,13 +27,6 @@ addCommandAlias(
 )
 
 
-lazy val core = project
-  .in(file("core"))
-
-lazy val test = project
-  .in(file("test"))
-  .dependsOn(core)
-
 lazy val scalafixSettings = List(
   scalaVersion := "2.13.7",
   addCompilerPlugin(scalafixSemanticdb),

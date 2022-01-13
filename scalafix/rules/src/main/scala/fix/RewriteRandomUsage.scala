@@ -28,17 +28,17 @@ class RewriteRandomUsage extends SemanticRule("RewriteRandomUsage") {
         
     
     private val newClockNowDeclaration = "randInt <- zio.Random.int"
-    def identifyClockInABlock(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
+    def convertRandomUsageInBlocks(implicit doc: SemanticDocument): PartialFunction[Tree, Patch] = {
         case t @ Term.Block(args) =>
             if (args.exists(containsARandomNextInt)  )
                 Patch.addLeft(t, s"""for {\n      ${newClockNowDeclaration}\n    } yield """) + 
                 args.map(replaceRandInt).asPatch
-            else  args.collect(identifyClockInABlock).asPatch
+            else  args.collect(convertRandomUsageInBlocks).asPatch
     }
 
   override def fix(implicit doc: SemanticDocument): Patch = {
     doc.tree.collect {
-        identifyClockInABlock
+        convertRandomUsageInBlocks
     }.asPatch
   }
   
